@@ -1,7 +1,5 @@
 import asyncio
 import logging
-import json
-import os
 
 from dotenv import load_dotenv
 
@@ -74,10 +72,10 @@ class SemanticKernel:
         self.history = ChatHistory()
 
     async def answer(self, history: str | ChatHistory):
+        # TODO: implement that history can also be a ChatHistory
 
         while True:
             userInput = history
-            logging.info("User > " + userInput)
 
             self.history.add_user_message(userInput)
 
@@ -89,37 +87,22 @@ class SemanticKernel:
             )
             for res in full_result[1:]:
                 self.history.add_message(res)
-            result = full_result[0]
 
-            print("Assistant > " + str(result))
             break
         return self.history
 
     def run(self, history: str | ChatHistory):
         hstry = asyncio.run(self.answer(history=history))
 
-        for el in hstry:
-            print()
-            print(
-                "____________________________________________________________________________"
-            )
-            logging.error(el.role)
-            dct = el.to_dict()
+        # Proper logging:
+        for entry in hstry:
+            dct = entry.to_dict()
             if "content" in dct.keys():
-                logging.error(el.to_dict()["content"])
-            for item in el.items:
+                logging_output: str = dct["content"]
+            for item in entry.items:
                 if isinstance(item, FunctionCallContent):
-                    logging.error(item)
+                    logging_output: str = str(item)
+
+            logging.info(f"\t{entry.role}:\t\t{logging_output}")
 
         return self.history[-1].content
-
-
-if __name__ == "__main__":
-
-    verbs_plugin = Verbs()
-    print(verbs_plugin.get_verbs())
-
-    kernel = SemanticKernel()
-    init_prompt: str = "What verbs can be learned?"
-    answer = kernel.run(init_prompt)
-    print(answer)
