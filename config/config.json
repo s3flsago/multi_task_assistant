@@ -1,0 +1,7 @@
+{
+    "name": "language_practice_assistant",
+    "log_level": "INFO",
+    "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "script_path": "src.language_practice_assistant.main",
+    "llm_name": "gpt-4o-mini"
+}
