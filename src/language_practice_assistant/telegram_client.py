@@ -23,21 +23,25 @@ TELEGRAM_TOKEN: str = os.getenv("TELEGRAM_TOKEN")
 
 class TelegramClient:
 
-    def __init__(self, openai_kernel):
+    def __init__(self, semantic_kernel):
         self.application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
-        self.response_handler = MessageHandler(
-            filters.TEXT & (~filters.COMMAND), self.respond
+        self.semantic_kernel = semantic_kernel
+
+        respond_fct = lambda update, context: self.respond(
+            update, context, semantic_kernel=self.semantic_kernel
         )
+        self.response_handler = MessageHandler(
+            filters.TEXT & (~filters.COMMAND), respond_fct
+        )
+
         self.application.add_handler(self.response_handler)
-        self.openai_kernel = openai_kernel
 
     @staticmethod
-    async def respond(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        # generic answer that should be given by Semantic Kernel:
-        response_text: str = f'Your message was: "{update.message.text}"'
-
-        input_text = update.message.text
-        answer = self.openai_kernel.run(input_text=input_text)
+    async def respond(
+        update: Update, context: ContextTypes.DEFAULT_TYPE, semantic_kernel,
+    ):
+        input_text: str = update.message.text
+        response_text = semantic_kernel.run(history=input_text)
 
         await context.bot.send_message(
             chat_id=update.effective_chat.id, text=response_text
@@ -45,3 +49,13 @@ class TelegramClient:
 
     def run(self):
         self.application.run_polling()
+
+
+if __name__ == "__main__":
+
+    from kernel import SemanticKernel
+
+    semantic_kernel = SemanticKernel()
+
+    client = TelegramClient(semantic_kernel)
+    client.run()

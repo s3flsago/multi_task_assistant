@@ -23,7 +23,6 @@ from semantic_kernel.functions.kernel_arguments import KernelArguments
 from semantic_kernel.contents.function_call_content import FunctionCallContent
 
 from typing import Annotated
-from semantic_kernel.functions import kernel_function
 
 load_dotenv()
 
@@ -74,14 +73,11 @@ class SemanticKernel:
 
         self.history = ChatHistory()
 
-    async def answer(self):
+    async def answer(self, history: str | ChatHistory):
 
         while True:
-            userInput = input("User > ")
+            userInput = history
             logging.info("User > " + userInput)
-
-            if userInput == "exit":
-                break
 
             self.history.add_user_message(userInput)
 
@@ -96,24 +92,26 @@ class SemanticKernel:
             result = full_result[0]
 
             print("Assistant > " + str(result))
-
+            break
         return self.history
 
-    def run(self):
-        hstry = asyncio.run(self.answer())
+    def run(self, history: str | ChatHistory):
+        hstry = asyncio.run(self.answer(history=history))
 
         for el in hstry:
             print()
             print(
                 "____________________________________________________________________________"
             )
-            print(el.role)
+            logging.error(el.role)
             dct = el.to_dict()
             if "content" in dct.keys():
-                print(el.to_dict()["content"])
+                logging.error(el.to_dict()["content"])
             for item in el.items:
                 if isinstance(item, FunctionCallContent):
-                    print(item)
+                    logging.error(item)
+
+        return self.history[-1].content
 
 
 if __name__ == "__main__":
@@ -122,5 +120,6 @@ if __name__ == "__main__":
     print(verbs_plugin.get_verbs())
 
     kernel = SemanticKernel()
-    kernel.run()
-    # Test prompt: "What verbs can be learned?"
+    init_prompt: str = "What verbs can be learned?"
+    answer = kernel.run(init_prompt)
+    print(answer)
