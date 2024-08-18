@@ -55,12 +55,6 @@ class TelegramClient:
     def run(self):
         self.application.run_polling()
 
+    def shutdown(self) -> None:
+        self.application.stop_running()
 
-if __name__ == "__main__":
-
-    from kernel import SemanticKernel
-
-    semantic_kernel = SemanticKernel()
-
-    client = TelegramClient(semantic_kernel)
-    client.run()

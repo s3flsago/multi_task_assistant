@@ -16,3 +16,7 @@ class Assistant:
 
     def start(self):
         self.telegram_client.run()
+
+    def terminate(self):
+        self.telegram_client.shutdown()
+        logging.info("Assistant terminated.")
