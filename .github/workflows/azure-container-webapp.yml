@@ -27,7 +27,7 @@
 name: Build and deploy a container to an Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: language_practice_assistant
+  AZURE_WEBAPP_NAME: language-practice-assistant
 
 on:
   push:
