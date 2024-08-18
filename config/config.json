@@ -3,5 +3,6 @@
     "log_level": "INFO",
     "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     "script_path": "src.language_practice_assistant.main",
+    "data_path": "data",
     "llm_name": "gpt-4o-mini"
 }

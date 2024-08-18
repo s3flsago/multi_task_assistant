@@ -8,9 +8,11 @@ logger = logging.getLogger(__name__)
 
 class Assistant:
 
-    def __init__(self):
-        self.semantic_kernel = SemanticKernel()
-        self.telegram_client = TelegramClient(self.semantic_kernel)
+    def __init__(self, config: dict):
+        self.semantic_kernel = SemanticKernel(config)
+        self.telegram_client = TelegramClient(
+            config=config, semantic_kernel=self.semantic_kernel
+        )
 
     def start(self):
         self.telegram_client.run()

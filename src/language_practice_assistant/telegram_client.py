@@ -12,6 +12,8 @@ from telegram.ext import (
     MessageHandler,
 )
 
+from src.language_practice_assistant.kernel import SemanticKernel
+
 logger = logging.getLogger(__name__)
 
 nest_asyncio.apply()
@@ -23,7 +25,8 @@ TELEGRAM_TOKEN: str = os.getenv("TELEGRAM_TOKEN")
 
 class TelegramClient:
 
-    def __init__(self, semantic_kernel):
+    def __init__(self, config: dict, semantic_kernel: SemanticKernel):
+        self.config = config
         self.application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
         self.semantic_kernel = semantic_kernel
 
@@ -38,7 +41,9 @@ class TelegramClient:
 
     @staticmethod
     async def respond(
-        update: Update, context: ContextTypes.DEFAULT_TYPE, semantic_kernel,
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE,
+        semantic_kernel,
     ):
         input_text: str = update.message.text
         response_text = semantic_kernel.run(history=input_text)

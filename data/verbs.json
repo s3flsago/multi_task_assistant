@@ -1,0 +1,154 @@
+{
+    "spanish": {
+        "verbs": [
+            "hacer",
+            "conducir",
+            "decir",
+            "tener",
+            "venir",
+            "ser",
+            "ir",
+            "dar",
+            "ver",
+            "querer",
+            "poder",
+            "poner",
+            "saber",
+            "estar",
+            "traer",
+            "haber",
+            "andar",
+            "caber",
+            "pedir",
+            "sentir"
+        ],
+        "tenses": [
+            "presente indicativo",
+            "pretérito indefinido",
+            "futuro indicativo",
+            "subjuntivo presente"
+        ],
+        "pronouns": [
+            "yo",
+            "tú",
+            "él/ella",
+            "nosotros",
+            "vosotros",
+            "ellos/ellas"
+        ]
+    },
+    "italian": {
+        "verbs": [
+            "fare",
+            "conducere",
+            "dire",
+            "avere",
+            "venire",
+            "essere",
+            "andare",
+            "dare",
+            "vedere",
+            "volere",
+            "potere",
+            "mettere",
+            "sapere",
+            "stare",
+            "portare",
+            "dovere",
+            "rimanere",
+            "uscire",
+            "prendere",
+            "sentire"
+        ],
+        "tenses": [
+            "presente indicativo",
+            "passato prossimo",
+            "futuro semplice",
+            "congiuntivo presente"
+        ],
+        "pronouns": [
+            "io",
+            "tu",
+            "lui/lei",
+            "noi",
+            "voi",
+            "loro"
+        ]
+    },
+    "portuguese": {
+        "verbs": [
+            "fazer",
+            "conduzir",
+            "dizer",
+            "ter",
+            "vir",
+            "ser",
+            "ir",
+            "dar",
+            "ver",
+            "querer",
+            "poder",
+            "pôr",
+            "saber",
+            "estar",
+            "trazer",
+            "haver",
+            "andar",
+            "caber",
+            "pedir",
+            "sentir"
+        ],
+        "tenses": [
+            "presente indicativo",
+            "pretérito perfeito",
+            "futuro do presente",
+            "subjuntivo presente"
+        ],
+        "pronouns": [
+            "eu",
+            "tu",
+            "ele/ela",
+            "nós",
+            "vós",
+            "eles/elas"
+        ]
+    },
+    "french": {
+        "verbs": [
+            "faire",
+            "conduire",
+            "dire",
+            "avoir",
+            "venir",
+            "être",
+            "aller",
+            "donner",
+            "voir",
+            "vouloir",
+            "pouvoir",
+            "mettre",
+            "savoir",
+            "être",
+            "prendre",
+            "devoir",
+            "tenir",
+            "partir",
+            "sortir",
+            "sentir"
+        ],
+        "tenses": [
+            "présent de l'indicatif",
+            "passé composé",
+            "futur simple",
+            "subjonctif présent"
+        ],
+        "pronouns": [
+            "je",
+            "tu",
+            "il/elle",
+            "nous",
+            "vous",
+            "ils/elles"
+        ]
+    }
+}
