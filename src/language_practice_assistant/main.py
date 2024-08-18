@@ -8,11 +8,6 @@ import json
 
 logger = logging.getLogger(__name__)
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(filename)s:%(lineno)d %(asctime)s %(levelname)s:%(message)s",
-)
-
 
 if __name__ == "__main__":
 
@@ -20,6 +15,11 @@ if __name__ == "__main__":
     with open(config_path, "r") as file:
         config: dict = json.load(file)
     config["absolute_data_path"] = os.path.join(os.getcwd(), config["data_path"])
+
+    logging.basicConfig(
+        level=config["log_level"],
+        format="%(filename)s:%(lineno)d %(asctime)s %(levelname)s:%(message)s",
+    )
 
     from src.language_practice_assistant.assistant import Assistant
 
