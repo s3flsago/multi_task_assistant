@@ -14,5 +14,5 @@ The language practice assistant is a telegram chatbot that can help the student 
 
 # How to study:
 - Launch telegram on your phone or desktop computer
-- in the browser, go to: `https://t.me/language_assistant_001_bot`
-- Say hello to the assistant to start the session. He will provide you with all necessary information. Happy learing :)
+- create a bot with the Telegram "BotFather"
+- Say hello to the assistant to start the session. He will provide you with all necessary information. Happy learning :)
