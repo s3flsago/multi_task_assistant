@@ -12,6 +12,11 @@ from flask.wrappers import Response
 
 from src.language_practice_assistant.assistant import Assistant
 
+config_path: str = os.path.join(os.getcwd(), "config", "config.json")
+with open(config_path, "r") as file:
+    config: dict = json.load(file)
+config["absolute_data_path"] = os.path.join(os.getcwd(), config["data_path"])
+
 logging.basicConfig(
     level=config["log_level"],
     format="%(filename)s:%(lineno)d %(asctime)s %(levelname)s:%(message)s",
@@ -46,12 +51,6 @@ app.config["SWAGGER"] = {
     "title": "Language Practice Assistant",
 }
 swagger = Swagger(app)
-
-
-config_path: str = os.path.join(os.getcwd(), "config", "config.json")
-with open(config_path, "r") as file:
-    config: dict = json.load(file)
-config["absolute_data_path"] = os.path.join(os.getcwd(), config["data_path"])
 
 
 if __name__ == "__main__":
