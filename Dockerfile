@@ -24,6 +24,7 @@ WORKDIR /app
 COPY . /app
 COPY --from=build /venv /venv
 
+EXPOSE 80
 
 FROM ready AS final
 
