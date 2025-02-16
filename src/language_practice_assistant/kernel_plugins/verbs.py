@@ -9,6 +9,7 @@ from semantic_kernel.functions import kernel_function
 
 class Verbs:
     """Plugin for learning verbs with the assistant"""
+    name = "verbs"
 
     def __init__(self, config):
         verb_data_path: str = os.path.join(config["absolute_data_path"], "verbs.json")

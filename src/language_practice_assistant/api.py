@@ -10,7 +10,7 @@ from flasgger import Swagger
 from flask import Flask
 from flask.wrappers import Response
 
-from src.language_practice_assistant.assistant import Assistant
+from src.language_practice_assistant.assistant import AssistantHandler
 
 config_path: str = os.path.join(os.getcwd(), "config", "config.json")
 with open(config_path, "r") as file:
@@ -27,7 +27,7 @@ def health():
     try:
         return Response(
             response=json.dumps(
-                {"name": "language-practice-assistant", "status": "ok"}
+                {"name": config["name"], "status": "ok"}
             ),
             status=200,
             mimetype="application/json",
@@ -48,16 +48,15 @@ def startup_flask_app():
 app = startup_flask_app()
 
 app.config["SWAGGER"] = {
-    "title": "Language Practice Assistant",
+    "title": config["display_name"],
 }
 swagger = Swagger(app)
 
 
 if __name__ == "__main__":
 
-    assistant = Assistant(config)
-
-    assistant.start()
+    assistant_handler = AssistantHandler(config)
+    assistant_handler.setup_assistants_parallel()
 
     reactor_args = {}
 

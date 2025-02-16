@@ -1,7 +1,10 @@
 import asyncio
 import logging
-
-from dotenv import load_dotenv
+import os
+import pkgutil
+import importlib
+import inspect
+from typing import Optional, Callable
 
 from openai import AsyncOpenAI
 from semantic_kernel import Kernel
@@ -19,29 +22,41 @@ from semantic_kernel.contents.chat_history import ChatHistory
 from semantic_kernel.functions.kernel_arguments import KernelArguments
 from semantic_kernel.contents.function_call_content import FunctionCallContent
 from semantic_kernel.contents.chat_message_content import ChatMessageContent
+from semantic_kernel.contents.utils.author_role import AuthorRole
+from semantic_kernel.contents import ChatMessageContent, TextContent, ImageContent
+
+from pydantic import BaseModel, Field
 
 
-from src.language_practice_assistant.kernel_plugins import Verbs
 
-load_dotenv()
+class KernelFunctionMapping(BaseModel): 
+    name: str = Field(..., min_length=1, max_length=50)
+    object_spec: Optional[Callable[..., object]] = None
+    methods: Optional[list[str]] = Field(default_factory=list)
 
 
 class SemanticKernel:
 
-    def __init__(self, config: dict):
+    def __init__(self, config: dict, assistant_name: str):
         self.config: dict = config
+        self.agent_config: dict = config["agent_config_info"][assistant_name]
         self.kernel: Kernel = Kernel()
 
         ai_service: OpenAIChatCompletion = OpenAIChatCompletion(
             service_id="chat_completion",
             async_client=AsyncOpenAI(),
-            ai_model_id="gpt-4o-mini",
+            ai_model_id=self.agent_config["llm_name"],
         )
         self.kernel.add_service(ai_service)
 
-        verbs_plugin: Verbs = Verbs(self.config)
-        self.kernel.add_plugin(verbs_plugin, "verbs")
-        self.history: ChatHistory = self._initiate_chat_history(Verbs.system_prompt())
+        plugin_class_names: list[str] = self.agent_config["included_plugins"]
+        selected_plugins: list[KernelFunctionMapping] = self.select_plugins(plugin_class_names)
+        
+        for plugin_class in selected_plugins:
+            plugin_instance = plugin_class.object_spec(self.config)
+            self.kernel.add_plugin(plugin_instance, plugin_instance.name)
+        
+        self.history: ChatHistory = self._initiate_chat_history(plugin_instance.system_prompt())
 
         self.chat_completion: OpenAIChatCompletion = self.kernel.get_service(
             type=ChatCompletionClientBase
@@ -56,6 +71,59 @@ class SemanticKernel:
         self.execution_settings.function_choice_behavior = FunctionChoiceBehavior.Auto(
             auto_invoke=True, filters={"included_plugins": ["verbs"]}
         )
+
+    def select_plugins(self, plugin_class_names: list[str]) -> list[KernelFunctionMapping]:
+        logging.info(f"Scanning plugin classes for {plugin_class_names}...")
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        plugins_directory= os.path.join(current_directory, "kernel_plugins")
+
+        available_plugin_modules: list[str] = [
+            module.name for module in pkgutil.iter_modules([plugins_directory])
+        ]
+        scanned_classes: list[KernelFunctionMapping] = []
+        for plugin_module_name in available_plugin_modules:
+            logging.info(f"Checking available module {plugin_module_name}")
+            full_module_name: str = f"{self.config['plugins_path']}.{plugin_module_name}"
+            try:
+                module = importlib.import_module(full_module_name)
+            except ImportError as e:
+                logging.error(f"Error importing plugin module {full_module_name}: {e}")
+
+            for _, obj in inspect.getmembers(module, inspect.isclass):
+                logging.info(f"Checking available class {plugin_module_name}.{obj.__name__}")
+                if obj.__name__ in plugin_class_names:
+                    # Check if the class is defined in this module (not imported) and is not abstract
+                    print(obj.__module__, full_module_name)
+                    if obj.__module__ == full_module_name and not inspect.isabstract(obj):
+                        logging.info(f"Checking module: {obj.__module__} ({module})")
+                        
+                        # Get the class methods and check for @kernel_function
+                        class_methods = [
+                            func for _, func in inspect.getmembers(obj, inspect.isfunction)
+                            # if hasattr(func, "_kernel_function_")
+                        ]
+                        logging.info(f"Module: {obj.__module__} has class_methods: {class_methods}")
+
+                        if class_methods:
+                            # Add class to the kernel and log the added methods
+                            method_names = [func.__name__ for func in class_methods]
+                            fnct = KernelFunctionMapping(
+                                name=obj.__name__, 
+                                object_spec=obj, 
+                                methods=method_names
+                            )
+                            scanned_classes.append(fnct)
+                            
+                            logging.info(
+                                "Added plugin %s to kernel with methods: '%s'",
+                                obj.__name__,
+                                method_names,
+                            )
+                        else:
+                            logging.warning(f"Module {full_module_name} does not have class methods.")
+        return scanned_classes
+
+
 
     @staticmethod
     def _initiate_chat_history(initial_system_prompt) -> ChatHistory:
@@ -78,13 +146,28 @@ class SemanticKernel:
             break
         return new_chat_messages
 
-    def run(self, history: str | ChatHistory):
-        if isinstance(history, str):
-            self.history.add_user_message(history)
-        else:
-            self.history: ChatHistory = history
-        first_new_message_index: int = len(self.history) - 1
+    @staticmethod
+    def get_data_uri_from_bytes(bytes, mime_type: str) -> str:
+        import base64
+        base64_encoded_data = base64.b64encode(bytes).decode("utf-8")
+        data_uri = f"data:{mime_type};base64,{base64_encoded_data}"
+        return data_uri
 
+    def run(self, input_text: str | None, input_image: bytes | None ):
+        user_input_items = []
+        if input_text:
+            user_input_items.append(TextContent(text=input_text))
+        if input_image:
+            data_uri = self.get_data_uri_from_bytes(input_image, "image/jpeg")
+            user_input_items.append(ImageContent(data_uri=data_uri,))
+
+        user_chat_message_content = ChatMessageContent(
+            role=AuthorRole.USER, items=user_input_items
+        )
+
+        self.history.add_message(user_chat_message_content)
+
+        first_new_message_index: int = len(self.history) - 1
         new_chat_messages: ChatHistory = asyncio.run(self.generate())
 
         try:

@@ -1,8 +1,22 @@
 {
     "name": "language_practice_assistant",
+    "display_name": "Helper Agent",
+    "active_agents": ["flat_finance_helper", "language_practice_assistant"],
     "log_level": "INFO",
     "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     "script_path": "src.language_practice_assistant.api",
+    "plugins_path": "src.language_practice_assistant.kernel_plugins",
     "data_path": "data",
-    "llm_name": "gpt-4o-mini"
+    "agent_config_info": {
+        "flat_finance_helper": {
+            "included_plugins": ["FlatFinance"],
+            "telegram_token_envvar": "FLAT_FINANCE_ASSISTANT_TELEGRAM_TOKEN",
+            "llm_name": "gpt-4o-mini"
+        },
+        "language_practice_assistant": {
+            "included_plugins": ["Verbs"],
+            "telegram_token_envvar": "LANGUAGE_PRACTICE_ASSISTANT_TELEGRAM_TOKEN",
+            "llm_name": "gpt-4o-mini"
+        }
+    }
 }
