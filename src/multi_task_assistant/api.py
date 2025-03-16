@@ -10,7 +10,7 @@ from flasgger import Swagger
 from flask import Flask
 from flask.wrappers import Response
 
-from src.multi_task_agent.assistant import AssistantHandler
+from src.multi_task_assistant.assistant import AssistantHandler
 
 config_path: str = os.path.join(os.getcwd(), "config", "config.json")
 with open(config_path, "r") as file:

@@ -4,8 +4,8 @@ import multiprocessing
 
 from dotenv import load_dotenv
 
-from src.multi_task_agent.kernel import SemanticKernel
-from src.multi_task_agent.telegram_client import TelegramClient
+from src.multi_task_assistant.kernel import SemanticKernel
+from src.multi_task_assistant.telegram_client import TelegramClient
 
 logger = logging.getLogger(__name__)
 

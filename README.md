@@ -1,46 +1,67 @@
-# multi_task_assistant
-The *multi_task_assistant* supports the user in a variety of tasks. Currently, the assistant can be accessed via telegram. The framework is open to implement further assistants. 
+# Multi-Task Assistant
 
-### Currently implemented assistants:
-- `flat_finance_helper`: Supports in analyzing and splitting up costs from scanned shopping receipts.
-- `language_practice_assistant`: Helps study irregular verbs in foreign languages.
+The **Multi-Task Assistant** is a versatile tool designed to support users in various tasks through a chat interface. The framework is modular, allowing for the implementation of additional assistants as needed.
 
-## Development:
-- `pip install -r requirements.txt`
-- `. startup.sh`
+## Features
+### Currently Implemented Assistants:
+- **Flat Finance Helper**: Analyzes and splits expenses from scanned shopping receipts.
+- **Language Practice Assistant**: Assists with studying irregular verbs in foreign languages.
 
-## CI/CD:
-- The docker image is built and pushed via Github Actions. The image can easily be run in an Azure App Service
+## Development
+To set up the development environment:
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Start the application:
+   ```bash
+   bash startup.sh
+   ```
 
-## Testing:
-- Run `pytest`
+## Continuous Integration & Deployment (CI/CD)
+- The Docker image is built and pushed via GitHub Actions.
+- The image is deployable to an Azure App Service for seamless cloud execution.
 
-## How to run the assistant locally:
-- Build docker image: `docker build -t multi_task_assistant:0.1 .` 
-- Run the container: `docker run multi_task_assistant:0.1 /bin/bash`
+## Testing
+Run unit tests using:
+```bash
+pytest
+```
 
-## How to study:
-- Launch telegram on your phone or desktop computer
-- create a bot with the Telegram "BotFather"
-- Say hello to the assistant to start the session. He will provide you with all necessary information. Happy learning :)
+## Running the Assistant Locally
+To build and run the assistant locally using Docker:
+1. Build the Docker image:
+   ```bash
+   docker build -t multi_task_assistant:0.1 .
+   ```
+2. Run the container:
+   ```bash
+   docker run multi_task_assistant:0.1 /bin/bash
+   ```
+
+## How to Use
+### Setting Up the Assistant on Telegram
+1. Open Telegram on your phone or desktop.
+2. Create a bot using Telegram’s **BotFather**.
+3. Start a conversation with the assistant by sending a greeting.
 
 ### Example Usage
+#### Language Practice Assistant
+```
+User: Hi!
 
-```plaintext
-User: Hi!  
+Bot: Hello! How many verbs would you like to quiz today, and in which language?
 
-Bot: Hello! How many verbs would you like to quiz today, and in which language?  
+User: Three verbs in Spanish, please.
 
-User: Three verbs in Spanish, please.  
+Bot: Great choice! Let's start with the first verb.
+     What is the form of "ser" for "él/ella" in the "futuro indicativo"?
 
-Bot: Great choice! Let's start with the first verb.  
-     What is the form of "ser" for "él/ella" in the "futuro indicativo"?  
+User: Seré
 
-User: Seré  
+Bot: That's close, but not quite right!
 
-Bot: That's close, but not quite right!  
-
-     The correct form of "ser" for "él/ella" in the "futuro indicativo" is **"será."**  
+     The correct form of "ser" for "él/ella" in the "futuro indicativo" is **"será."**
 
      Here's a quick reference for "ser" in the "futuro indicativo":
      - yo **seré**
@@ -50,5 +71,13 @@ Bot: That's close, but not quite right!
      - vosotros **seréis**
      - ellos/ellas **serán**
 
-     Now, let's move on to the next verb!  
-     What is the form of "caber" for "nosotros" in the "subjuntivo presente"?  
+     Now, let's move on to the next verb!
+     What is the form of "caber" for "nosotros" in the "subjuntivo presente"?
+```
+
+## Future Enhancements
+- Integration with additional messaging platforms.
+- Expansion of available assistants for broader functionality.
+
+
+

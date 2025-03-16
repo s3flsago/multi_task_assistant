@@ -10,7 +10,7 @@ from telegram.ext import (
     MessageHandler,
 )
 
-from src.multi_task_agent.kernel import SemanticKernel
+from src.multi_task_assistant.kernel import SemanticKernel
 
 logger = logging.getLogger(__name__)
 
