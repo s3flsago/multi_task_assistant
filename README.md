@@ -13,7 +13,7 @@ The *multi_task_assistant* supports the user in a variety of tasks. Currently, t
 - The docker image is built and pushed via Github Actions. The image can easily be run in an Azure App Service
 
 ## Testing:
-- Run pytest
+- Run `pytest`
 
 ## How to run the assistant locally:
 - Build docker image: `docker build -t multi_task_assistant:0.1 .` 

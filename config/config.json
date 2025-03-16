@@ -1,11 +1,11 @@
 {
-    "name": "language_practice_assistant",
-    "display_name": "Helper Agent",
+    "name": "multi_task_assistant",
+    "display_name": "Multi Task Assistant",
     "active_agents": ["flat_finance_helper", "language_practice_assistant"],
     "log_level": "INFO",
     "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    "script_path": "src.language_practice_assistant.api",
-    "plugins_path": "src.language_practice_assistant.kernel_plugins",
+    "script_path": "src.multi_task_assistant.api",
+    "plugins_path": "src.multi_task_assistant.kernel_plugins",
     "data_path": "data",
     "agent_config_info": {
         "flat_finance_helper": {
