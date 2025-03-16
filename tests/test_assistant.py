@@ -6,7 +6,7 @@ import unittest
 import asyncio
 import threading
 
-from src.language_practice_assistant.assistant import Assistant
+from src.multi_task_agent.assistant import Assistant
 
 
 class Test(unittest.TestCase):

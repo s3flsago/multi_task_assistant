@@ -1,23 +1,30 @@
-# language_practice_assistant
-The language practice assistant is a telegram chatbot that can help the student to learn foreign languages.
+# multi_task_assistant
+The *multi_task_assistant* supports the user in a variety of tasks. Currently, the assistant can be accessed via telegram. The framework is open to implement further assistants. 
 
-# Development:
-`pip install -r requirements.txt`
-`. startup.sh`
+### Currently implemented assistants:
+- `flat_finance_helper`: Supports in analyzing and splitting up costs from scanned shopping receipts.
+- `language_practice_assistant`: Helps study irregular verbs in foreign languages.
 
-# Testing:
+## Development:
+- `pip install -r requirements.txt`
+- `. startup.sh`
 
+## CI/CD:
+- The docker image is built and pushed via Github Actions. The image can easily be run in an Azure App Service
 
-# How to to run the assistant:
-- Build docker image: `docker build -t language_practice_assistant:0.1 .` 
-- Run the container: `docker run  language_practice_assistant:0.1 /bin/bash`
+## Testing:
+- Run pytest
 
-# How to study:
+## How to run the assistant locally:
+- Build docker image: `docker build -t multi_task_assistant:0.1 .` 
+- Run the container: `docker run multi_task_assistant:0.1 /bin/bash`
+
+## How to study:
 - Launch telegram on your phone or desktop computer
 - create a bot with the Telegram "BotFather"
 - Say hello to the assistant to start the session. He will provide you with all necessary information. Happy learning :)
 
-# Example Usage
+### Example Usage
 
 ```plaintext
 User: Hi!  
