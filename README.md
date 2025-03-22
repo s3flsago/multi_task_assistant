@@ -1,4 +1,4 @@
-# Multi-Task Assistant
+# Multi Task Assistant
 
 The **Multi-Task Assistant** is a versatile tool designed to support users in various tasks through a chat interface. The framework is modular, allowing for the implementation of additional assistants as needed.
 
