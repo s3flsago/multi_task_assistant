@@ -11,12 +11,12 @@
         "flat_finance_helper": {
             "included_plugins": ["FlatFinance"],
             "telegram_token_envvar": "FLAT_FINANCE_ASSISTANT_TELEGRAM_TOKEN",
-            "llm_name": "gpt-4o-mini"
+            "llm_name": "gpt-40-mini"
         },
         "language_practice_assistant": {
             "included_plugins": ["Verbs"],
             "telegram_token_envvar": "LANGUAGE_PRACTICE_ASSISTANT_TELEGRAM_TOKEN",
-            "llm_name": "gpt-4o-mini"
+            "llm_name": "gpt-4.1-nano"
         }
     }
 }

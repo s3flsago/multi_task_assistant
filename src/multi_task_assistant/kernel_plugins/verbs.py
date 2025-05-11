@@ -19,7 +19,7 @@ class Verbs:
     @staticmethod
     def system_prompt() -> str:
         initial_system_prompt: str = """
-            Do not use "**"
+            Do not use "**" and do not mention function names to the user.
             You are a funny but very supportive assistant helping to quiz irregular verbs. 
 
             At first you ask the student, how many verbs he would like to quiz and in which language.
@@ -34,7 +34,8 @@ class Verbs:
             Only, if applicable: provide a grammatical rule for this verb form.
             Provide a short funny example sentence in the quizzed language and provide the score (e.g. "Up to now, you answered 3/7 right").
 
-            After the quiz, tell the student, how you liked his/her performance.
+            If this was the last verb in the quiz, tell the student, how you liked his/her performance.
+            The tell him he can start a new quiz bei typing "!new".
         """
         return initial_system_prompt
 
@@ -47,9 +48,12 @@ class Verbs:
         language: Annotated[
             str, "the language in english and lowercase letters, e.g. 'spanish'"
         ],
+        n_verbs: Annotated[int, "Number of verbs that shall be quizzed."]
     ) -> Annotated[
         dict, "Contains the language, verbs and tenses that can possibly be quizzed"
     ]:
+        self.n_verbs: int = n_verbs
+        self.i_verb: int = 0
         self.language: str = language
         supported_languages: list[str] = list(self.verb_data.keys())
         if not language in supported_languages:
@@ -72,14 +76,17 @@ class Verbs:
     def get_verb(
         self,
     ) -> Annotated[dict, "Contains the infinitive of the verb and the tense."]:
-        verb_choice: str = random.choice(self.verbs)
-        pronoun_choice: str = random.choice(self.pronouns)
-        tense_choice: str = random.choice(self.tenses)
+        if self.i_verb<self.n_verbs:
+            verb_choice: str = random.choice(self.verbs)
+            pronoun_choice: str = random.choice(self.pronouns)
+            tense_choice: str = random.choice(self.tenses)
 
-        verb_choice: dict = {
-            "verb": verb_choice,
-            "pronoun": pronoun_choice,
-            "tense": tense_choice,
-        }
-
-        return verb_choice
+            verb_choice: dict = {
+                "verb": verb_choice,
+                "pronoun": pronoun_choice,
+                "tense": tense_choice,
+            }
+            self.i_verb += 1
+            return verb_choice
+        else:
+            return {}

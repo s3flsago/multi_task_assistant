@@ -37,6 +37,8 @@ class KernelFunctionMapping(BaseModel):
 
 class SemanticKernel:
 
+    system_prompt: str = None
+
     def __init__(self, config: dict, assistant_name: str):
         self.config: dict = config
         self.agent_config: dict = config["agent_config_info"][assistant_name]
@@ -55,8 +57,12 @@ class SemanticKernel:
         for plugin_class in selected_plugins:
             plugin_instance = plugin_class.object_spec(self.config)
             self.kernel.add_plugin(plugin_instance, plugin_instance.name)
-        
-        self.history: ChatHistory = self._initiate_chat_history(plugin_instance.system_prompt())
+            if plugin_instance.system_prompt():
+                if not self.system_prompt:
+                    self.system_prompt: str = plugin_instance.system_prompt()
+                else:
+                    raise ValueError(f"More than one plugin with system prompt detected")
+        self.history: ChatHistory = self._initiate_chat_history(self.system_prompt)
 
         self.chat_completion: OpenAIChatCompletion = self.kernel.get_service(
             type=ChatCompletionClientBase
@@ -93,7 +99,6 @@ class SemanticKernel:
                 logging.info(f"Checking available class {plugin_module_name}.{obj.__name__}")
                 if obj.__name__ in plugin_class_names:
                     # Check if the class is defined in this module (not imported) and is not abstract
-                    print(obj.__module__, full_module_name)
                     if obj.__module__ == full_module_name and not inspect.isabstract(obj):
                         logging.info(f"Checking module: {obj.__module__} ({module})")
                         
@@ -129,10 +134,10 @@ class SemanticKernel:
     def _initiate_chat_history(initial_system_prompt) -> ChatHistory:
         history: ChatHistory = ChatHistory()
         history.add_system_message(initial_system_prompt)
+        logging.info(f"Initated chat history.")
         return history
 
     async def generate(self):
-
         while True:
             new_chat_messages: list[ChatMessageContent] = (
                 await self.chat_completion.get_chat_message_contents(
@@ -142,7 +147,6 @@ class SemanticKernel:
                     arguments=KernelArguments(),
                 )
             )
-
             break
         return new_chat_messages
 
@@ -154,6 +158,9 @@ class SemanticKernel:
         return data_uri
 
     def run(self, input_text: str | None, input_image: bytes | None ):
+        if input_text=="!new":
+            self.history: ChatHistory = self._initiate_chat_history(self.system_prompt)
+
         user_input_items = []
         if input_text:
             user_input_items.append(TextContent(text=input_text))
@@ -171,9 +178,8 @@ class SemanticKernel:
         new_chat_messages: ChatHistory = asyncio.run(self.generate())
 
         try:
-            new_messages: list[ChatMessageContent] = self.history[
-                first_new_message_index:
-            ]
+            # logging.info(f"Length of history: {len(self.history)}")
+            new_messages: list[ChatMessageContent] = self.history[first_new_message_index:] + [new_chat_messages[-1]]
         except UnboundLocalError as u_err:
             logging.error(str(u_err) + "\t-\tApparently, the bot did not answer.")
             return "Sorry, I cannot provide an answer for this. Please provide new instructions."
@@ -183,17 +189,22 @@ class SemanticKernel:
 
             # only for logging
             dct = message.to_dict()
-            if "content" in dct.keys():
-                logging_output: str = dct["content"]
+
             for item in message.items:
                 if isinstance(item, FunctionCallContent):
-                    logging_output: str = str(item)
-            logging.info(f"\t{message.role}:\t\t{logging_output}")
+                    logging_plugin_output: str = str(item)
+                    logging.info(f"\t{message.role}:\t\t{logging_plugin_output}")
+            if "content" in dct.keys():
+                logging_message_output: str = dct["content"]
+                logging.info(f"\t{message.role}:\t\t{logging_message_output}")
 
         # TODO: check, which new answers are actually responses (maybe more than one?)
         if len(new_chat_messages) == 1:
             last_answer: str = new_chat_messages[-1].content
+            self.history.add_message(new_chat_messages[-1])
+
         else:
             raise IndexError("More than one message returned")
+        
 
         return last_answer
